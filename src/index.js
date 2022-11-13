@@ -1,7 +1,6 @@
-import axios from 'axios';
 import Notiflix from 'notiflix';
-//import './css/styles.css';
-// import lightbox from 'simplelightbox';
+
+import lightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 let getElem = selector => document.querySelector(selector);
@@ -19,38 +18,30 @@ import { renderGallerieItem } from './renderImg';
 import ImgApi from './fetch';
 const FetchImages = new ImgApi();
 
-async function onformSubmit(event) {
+function onformSubmit(event) {
   event.preventDefault();
   clearImages();
   FetchImages.searchData =
     event.currentTarget.elements.searchQuery.value.trim();
   FetchImages.resPage();
-
-  try {
-    const item = await FetchImages.fetchImages();
-    if (item.hits.length === 0) {
+  FetchImages.fetchImages().then(item => {
+    if (item.data.hits.length === 0) {
       Notiflix.Notify.failure(
         'Too many matches found. Please enter a more specific name.'
       );
       return;
     }
-    Notiflix.Notify.info(`Hooray! We found ${item.total} images.`);
-    renderGallerieItem(item);
+    Notiflix.Notify.info(`Hooray! We found ${item.data.total} images.`);
+    renderGallerieItem(item.data);
     getElem('.more-btn').style.display = 'inline-block';
-  } catch (error) {
-    console.log(error);
-  }
+  });
 }
 
-async function onMoreLoad() {
-  try {
-    FetchImages.incrementPage();
-    const item = await FetchImages.fetchImages();
-    renderGallerieItem(item);
-    //lightbox.refresh();
-  } catch (error) {
-    console.log(error);
-  }
+function onMoreLoad() {
+  FetchImages.incrementPage();
+  FetchImages.fetchImages().then(item => {
+    renderGallerieItem(item.data);
+  });
 }
 
 function clearImages() {

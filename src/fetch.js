@@ -1,3 +1,4 @@
+import axios from 'axios';
 export default class ImgApi {
   constructor() {
     this.searchData = '';
@@ -17,9 +18,8 @@ export default class ImgApi {
       page: this.page,
     });
 
-    const responce = await fetch(`${URL}?${searchParams}`);
-    const img = await responce.json();
-    return img;
+    const responce = await axios.get(`${URL}?${searchParams}`);
+    return responce;
   }
 
   incrementPage() {
