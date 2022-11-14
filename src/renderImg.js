@@ -32,5 +32,5 @@ export function renderGallerieItem(images) {
 
   getElem('.gallery').insertAdjacentHTML('beforeend', markup);
   let lightbox = new SimpleLightbox('.gallery__item');
-  console.log(lightbox);
+  // console.log(lightbox);
 }

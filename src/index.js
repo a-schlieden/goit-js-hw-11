@@ -16,16 +16,17 @@ Notiflix.Notify.init({
 import { renderGallerieItem } from './renderImg';
 
 import ImgApi from './fetch';
-const FetchImages = new ImgApi();
+const fetchImages = new ImgApi();
 
 function onformSubmit(event) {
   event.preventDefault();
   clearImages();
-  FetchImages.searchData =
+  fetchImages.searchData =
     event.currentTarget.elements.searchQuery.value.trim();
-  FetchImages.resPage();
-  FetchImages.fetchImages().then(item => {
+  fetchImages.resPage();
+  fetchImages.fetchImages().then(item => {
     if (item.data.hits.length === 0) {
+      getElem('.more-btn').style.display = 'none';
       Notiflix.Notify.failure(
         'Too many matches found. Please enter a more specific name.'
       );
@@ -38,8 +39,15 @@ function onformSubmit(event) {
 }
 
 function onMoreLoad() {
-  FetchImages.incrementPage();
-  FetchImages.fetchImages().then(item => {
+  fetchImages.incrementPage();
+  fetchImages.fetchImages().then(item => {
+    if (item.data.hits.length === 0) {
+      getElem('.more-btn').style.display = 'none';
+      Notiflix.Notify.failure(
+        `We're sorry, but you've reached the end of search results.`
+      );
+      return;
+    }
     renderGallerieItem(item.data);
   });
 }
